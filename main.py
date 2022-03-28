@@ -1,12 +1,13 @@
 from fastapi import FastAPI
 from config import Config
 
-from routers import home
+from routers import home, server
 
 from fakedata import add_fakedata
 
 app = FastAPI()
 app.include_router(home.router)
+app.include_router(server.router)
 
 if Config.FAKE_DATA == "true":
     add_fakedata()
