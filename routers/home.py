@@ -7,17 +7,15 @@ router = APIRouter()
 
 @router.get("/home/stock")
 async def get_stock(numbers: int):
-    db = SESSION
-    data = db.query(database_Stock).filter(database_Stock.number == numbers).first()
-    db.close()
+    data = SESSION.query(database_Stock).filter(database_Stock.number == numbers).first()
+    SESSION.close()
     return data
 
 @router.get("/home/user")
 async def get_favorite(user: str):
-    db = SESSION
-    data = db.query(database_Favorite).filter(database_Favorite.user == user).all()
-    db.close()
-    return data
+    user_favorite = SESSION.query(database_Favorite).filter(database_Favorite.user == user).all()
+    SESSION.close()
+    return user_favorite
 
 @router.put("/home")
 async def add_stock(stock_info: Stock):

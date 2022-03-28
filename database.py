@@ -29,6 +29,13 @@ class database_Stock(Base):
     now_price = Column(Integer, nullable=False)
     price_increase = Column(Integer, nullable=False)
 
+class database_Favorite(Base):
+    __tablename__ = "favorite"
+
+    id = Column(Integer, primary_key=True)
+    number = Column(Integer, nullable=False)
+    user = Column(String, nullable=False)
+
 Base.metadata.create_all(bind=engine)
 
 
@@ -41,3 +48,8 @@ class Stock(BaseModel):
     start_price: int
     now_price: int
     price_increase: int
+
+class Favorite(BaseModel):
+    id: int
+    number: int
+    user: str
