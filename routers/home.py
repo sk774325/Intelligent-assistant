@@ -1,18 +1,25 @@
-from fastapi import FastAPI
+from fastapi import APIRouter
 
 from database import SESSION
-from database import Stock, database_Stock
+from database import Stock, database_Stock, Favorite, database_Favorite
 
-app = FastAPI()
+router = APIRouter()
 
-@app.get("/home")
-async def get(numbers: int):
+@router.get("/home/stock")
+async def get_stock(numbers: int):
     db = SESSION
     data = db.query(database_Stock).filter(database_Stock.number == numbers).first()
     db.close()
     return data
 
-@app.put("/home")
+@router.get("/home/user")
+async def get_favorite(user: str):
+    db = SESSION
+    data = db.query(database_Favorite).filter(database_Favorite.user == user).all()
+    db.close()
+    return data
+
+@router.put("/home")
 async def add_stock(stock_info: Stock):
     new_stack_info = database_Stock(
         **{
@@ -29,8 +36,3 @@ async def add_stock(stock_info: Stock):
     SESSION.commit()
     SESSION.refresh(new_stack_info)
     return stock_info
-
-
-if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=8000)  
