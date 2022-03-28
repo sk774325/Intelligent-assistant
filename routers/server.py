@@ -1,6 +1,6 @@
 import sqlite3
 from fastapi import APIRouter
-from LogIn import check_if_registered
+from routers.LogIn import check_if_registered
 from database import SESSION
 
 
