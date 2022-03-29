@@ -21,3 +21,16 @@ def add_fakedata():
         )
         SESSION.merge(new_stock)
         SESSION.commit()
+    
+    #favorite fakedata
+    fakedata_favorite = json.load(open("fakedata_favorite.json"))
+    for data in fakedata_favorite:
+        new_favorite = database_Favorite(
+            **{
+                "id": int(data["id"]),
+                "number": int(data["number"]),
+                "user": data["user"]
+            }
+        )
+        SESSION.merge(new_favorite)
+        SESSION.commit()
