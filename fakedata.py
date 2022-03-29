@@ -16,7 +16,7 @@ def add_fakedata():
                 "low_price": float(data["low_price"]),
                 "start_price": float(data["start_price"]),
                 "now_price": float(data["now_price"]),
-                "price_increase": float(data["now_price"])-float(data["start_price"])
+                "price_increase": round(float(data["now_price"])-float(data["start_price"]),2)
             }
         )
         SESSION.merge(new_stock)
