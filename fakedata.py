@@ -7,18 +7,17 @@ from database import database_Stock, database_Favorite
 def add_fakedata():
     #stock fakedata
     fakedata_stock = json.load(open("fakedata_stock.json"))
-    for data in enumerate(fakedata_stock):
+    for data in fakedata_stock:
         new_stock = database_Stock(
             **{
-                "number": fakedata_stock["number"],
-                "name": fakedata_stock["name"],
-                "high_price": fakedata_stock["high_price"],
-                "low_price": fakedata_stock["low_price"],
-                "start_price": fakedata_stock["start_price"],
-                "now_price": fakedata_stock["now_price"],
-                "price_increase": fakedata_stock["price_increase"]
+                "number": int(data["number"]),
+                "name": data["name"],
+                "high_price": float(data["high_price"]),
+                "low_price": float(data["low_price"]),
+                "start_price": float(data["start_price"]),
+                "now_price": float(data["now_price"]),
+                "price_increase": float(data["now_price"])-float(data["start_price"])
             }
         )
-    SESSION.add(new_stock)
-    SESSION.commit()
-    SESSION.refresh(new_stock)
+        SESSION.merge(new_stock)
+        SESSION.commit()

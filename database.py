@@ -4,7 +4,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, Float
 
 
 # initialize database
@@ -23,11 +23,11 @@ class database_Stock(Base):
 
     number = Column(Integer, primary_key=True)
     name = Column(String, unique=True, nullable=False)
-    high_price = Column(Integer, nullable=False)
-    low_price = Column(Integer, nullable=False)
-    start_price = Column(Integer, nullable=False)
-    now_price = Column(Integer, nullable=False)
-    price_increase = Column(Integer, nullable=False)
+    high_price = Column(Float, nullable=False)
+    low_price = Column(Float, nullable=False)
+    start_price = Column(Float, nullable=False)
+    now_price = Column(Float, nullable=False)
+    price_increase = Column(Float, nullable=False)
 
 class database_Favorite(Base):
     __tablename__ = "favorite"
@@ -43,11 +43,11 @@ Base.metadata.create_all(bind=engine)
 class Stock(BaseModel):
     number: int
     name: str
-    high_price: int
-    low_price: int
-    start_price: int
-    now_price: int
-    price_increase: int
+    high_price: float
+    low_price: float
+    start_price: float
+    now_price: float
+    price_increase: float
 
 class Favorite(BaseModel):
     id: int
