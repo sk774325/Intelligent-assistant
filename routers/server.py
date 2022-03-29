@@ -1,8 +1,14 @@
 import sqlite3
 from fastapi import APIRouter
-from routers.LogIn import check_if_registered
 from database import SESSION
 
+def check_if_registered(id, c):
+    execution = 'SELECT id FROM user_data'
+    c.execute(execution)
+    id_list = c.fetchall()
+    target = (id,)
+
+    return target in id_list
 
 # app = fastapi.FastAPI()
 router = APIRouter()
