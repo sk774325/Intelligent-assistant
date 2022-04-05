@@ -1,5 +1,6 @@
 import sqlite3
 from fastapi import APIRouter
+from sklearn import tree
 # from database import SESSION
 
 def check_if_registered(id, c):
@@ -28,24 +29,37 @@ if listOfTable == []:
 @router.get("/sign_up/{user_id}")
 async def send_user_data(user_id: str, user_pwd: str, comfirm_pwd: str):
     # http://127.0.0.1:8000/sign_up/Shon?user_pwd=12344&comfirm_pwd=12344
+    response={
+        'Successful':False,
+        'Comfirm_pwd_wrongly':False,
+        'Used_ID':False
+    }
+
+    if user_pwd != comfirm_pwd:
+        response['Comfirm_pwd_wrongly']=True
 
     if not check_if_registered(user_id, c):
-        sql_execution = 'INSERT INTO user_data (id, pwd) VALUES ("{}", "{}")'.format(user_id, comfirm_pwd)
+        sql_execution = 'INSERT INTO user_data (id, pwd) VALUES ("{}", "{}")'.format(user_id, user_pwd)
 
         c.execute(sql_execution)
         conn.commit()
+        response["Successful"]=True
 
-        return "Sign up successfully"
     else:
-        return "This ID has been used"
+        response['Used_ID']=True
 
+    return response
 
 @router.get("/log_in/{user_id}")
 async def log_in(user_id: str, user_pwd: str):
-    # http://127.0.0.1:8000/log_in/Shon?user_pwd=12344&comfirm_pwd=12344
+    # http://127.0.0.1:8000/log_in/Shon?user_pwd=12344
+    response={
+        'Registered':False,
+        'Successful':False,
+    }
 
     if not check_if_registered(user_id, c):
-        return "You don't have an account, please register one"
+        response['Registered']=False
     else:
 
         execution = 'SELECT pwd FROM user_data WHERE id="{}"'.format(user_id)
@@ -55,6 +69,10 @@ async def log_in(user_id: str, user_pwd: str):
         if user_pwd == pwd_in_db:
             c.close()
             conn.close()
-            return "Log in successfully"
+            response['Registered']=True
+            response['Successful']=True
         else:
-            return "Wrong password, please try again"
+            response['Registered']=True
+            response['Successful']=False
+
+    return response

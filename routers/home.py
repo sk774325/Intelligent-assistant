@@ -20,7 +20,7 @@ async def get_favorite(user: str):
 @router.put("/home")
 async def add_stock(stock_info: Stock):
     new_stack_info = database_Stock(
-        **{
+        {
             "number": stock_info.number,
             "name": stock_info.name,
             "high_price": stock_info.high_price,
