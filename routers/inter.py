@@ -20,7 +20,8 @@ start = datetime.utcnow()
 time_start = start
 
 @router.get("/stock_inter")
-async def sort_stock(id: int):
+async def basic(id: int):
+    # 爬蟲
     try:
         days = 24 * 60 * 60    #一天有86400秒 
         initial = datetime.datetime.strptime( '1970-01-01' , '%Y-%m-%d' )
@@ -39,9 +40,26 @@ async def sort_stock(id: int):
         write_data(df,response,id)
     except:
         print("輸入錯誤格式，請重新輸入")
+    # plot
     address = r"..\stock\\" + id + ".csv"
-    data = pd.read_csv(address)
-    return (data.to_json(orient = 'index'))
+    df_kd_draw = pd.read(address)
+    df_kd_draw['K'], df_kd_draw['D'] = talib.STOCH(df_kd_draw['High'], 
+                                         df_kd_draw['Low'], 
+                                         df_kd_draw['Close'], 
+                                         fastk_period=9,
+                                         slowk_period=3,
+                                         slowk_matype=1,
+                                         slowd_period=3,
+                                         slowd_matype=1)
+    add_plot =[mpf.make_addplot(df_kd_draw["K"],panel= 2,color="b"),
+    mpf.make_addplot(df_kd_draw["D"],panel= 2,color="r")]
+    mc = mpf.make_marketcolors(up='r', down='g', inherit=True)
+    s  = mpf.make_mpf_style(base_mpf_style='yahoo', marketcolors=mc)
+    address = r"..\images\\" + id + "_kd_ptr" + ".png" #自己改路徑
+    kwargs = dict(type='candle', mav=(5,10,20,60), volume = True,figsize=(20, 10),title = id+" KD picture", style=s,addplot=add_plot)
+    mpf.plot(df_kd_draw, **kwargs, savefig=address)
+    re_address = "http://127.0.0.1:8000//images/" + id + "_kd_ptr.png"
+    return re_address
 
 def write_data(data_frame,response,id):
     data_frame = pd.read_csv(StringIO(response.text),index_col = "Date",parse_dates = ["Date"])
@@ -78,27 +96,27 @@ async def MACD_draw(id: int):
     re_address = "http://127.0.0.1:8000/images/" + id + "_MACD_ptr.png"
     return re_address
 
-@router.get("/kd")
-async def KD_draw(id: int):
-    address = r"..\stock\\" + id + ".csv"
-    df_kd_draw = pd.read(address)
-    df_kd_draw['K'], df_kd_draw['D'] = talib.STOCH(df_kd_draw['High'], 
-                                         df_kd_draw['Low'], 
-                                         df_kd_draw['Close'], 
-                                         fastk_period=9,
-                                         slowk_period=3,
-                                         slowk_matype=1,
-                                         slowd_period=3,
-                                         slowd_matype=1)
-    add_plot =[mpf.make_addplot(df_kd_draw["K"],panel= 2,color="b"),
-    mpf.make_addplot(df_kd_draw["D"],panel= 2,color="r")]
-    mc = mpf.make_marketcolors(up='r', down='g', inherit=True)
-    s  = mpf.make_mpf_style(base_mpf_style='yahoo', marketcolors=mc)
-    address = r"..\images\\" + id + "_kd_ptr" + ".png" #自己改路徑
-    kwargs = dict(type='candle', mav=(5,10,20,60), volume = True,figsize=(20, 10),title = id+" KD picture", style=s,addplot=add_plot)
-    mpf.plot(df_kd_draw, **kwargs, savefig=address)
-    re_address = "http://127.0.0.1:8000/images/" + id + "_kd_ptr.png"
-    return re_address
+# @router.get("/kd")
+# async def KD_draw(id: int):
+#     address = r"..\stock\\" + id + ".csv"
+#     df_kd_draw = pd.read(address)
+#     df_kd_draw['K'], df_kd_draw['D'] = talib.STOCH(df_kd_draw['High'], 
+#                                          df_kd_draw['Low'], 
+#                                          df_kd_draw['Close'], 
+#                                          fastk_period=9,
+#                                          slowk_period=3,
+#                                          slowk_matype=1,
+#                                          slowd_period=3,
+#                                          slowd_matype=1)
+#     add_plot =[mpf.make_addplot(df_kd_draw["K"],panel= 2,color="b"),
+#     mpf.make_addplot(df_kd_draw["D"],panel= 2,color="r")]
+#     mc = mpf.make_marketcolors(up='r', down='g', inherit=True)
+#     s  = mpf.make_mpf_style(base_mpf_style='yahoo', marketcolors=mc)
+#     address = r"..\images\\" + id + "_kd_ptr" + ".png" #自己改路徑
+#     kwargs = dict(type='candle', mav=(5,10,20,60), volume = True,figsize=(20, 10),title = id+" KD picture", style=s,addplot=add_plot)
+#     mpf.plot(df_kd_draw, **kwargs, savefig=address)
+#     re_address = "http://127.0.0.1:8000/images/" + id + "_kd_ptr.png"
+#     return re_address
 
 @router.get("/kd_golden")
 async def KD_golden(id: int):
