@@ -9,7 +9,6 @@ router = APIRouter()
 conn = sqlite3.connect("./UserData.db", check_same_thread=False)
 c = conn.cursor()
 
-
 # Sign up
 @router.get("/sign_up/{user_id}")
 async def send_user_data(user_id: str, user_pwd: str, comfirm_pwd: str):
